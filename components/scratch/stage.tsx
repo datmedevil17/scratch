@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useCallback, useEffect } from "react";
-import { Play, Stop, CornersOut, CornersIn, Crosshair } from "@phosphor-icons/react";
+import { PlayIcon, StopIcon, CornersOutIcon, CornersInIcon, CrosshairIcon } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
 // ── Stage is 480×360 (4:3), matching Scratch's coordinate system ─────────────
@@ -144,15 +144,15 @@ export function Stage({ isRunning, onRun, onStop }: StageProps) {
           className="absolute right-1 top-1 flex size-6 items-center justify-center rounded bg-black/30 text-white opacity-0 transition-opacity hover:bg-black/50 group-hover:opacity-100 [div:hover_>_&]:opacity-100"
         >
           {fullscreen
-            ? <CornersIn  className="size-3.5" />
-            : <CornersOut className="size-3.5" />
+            ? <CornersInIcon  className="size-3.5" />
+            : <CornersOutIcon className="size-3.5" />
           }
         </button>
 
         {/* Coordinates overlay (bottom-left) */}
         {stageCoords && (
           <div className="absolute bottom-1 left-1 flex items-center gap-1 rounded bg-black/40 px-1.5 py-0.5 text-[10px] font-mono text-white">
-            <Crosshair className="size-2.5" />
+            <CrosshairIcon className="size-2.5" />
             x: {stageCoords.x.toString().padStart(4, '\u00a0')}
             &nbsp; y: {stageCoords.y.toString().padStart(4, '\u00a0')}
           </div>
@@ -181,13 +181,13 @@ export function Stage({ isRunning, onRun, onStop }: StageProps) {
               : 'border-green-400 bg-green-50 text-green-500 hover:bg-green-100 hover:scale-105 dark:bg-green-900/10',
           )}
         >
-          <Play weight="fill" className="size-3.5" />
+          <PlayIcon weight="fill" className="size-3.5" />
         </button>
 
-        {/* Stop */}
+        {/* StopIcon */}
         <button
           id="stage-stop-btn"
-          aria-label="Stop"
+          aria-label="StopIcon"
           disabled={!isRunning}
           onClick={onStop}
           className={cn(
@@ -197,7 +197,7 @@ export function Stage({ isRunning, onRun, onStop }: StageProps) {
               : 'border-red-400 bg-red-50 text-red-400 hover:bg-red-100 hover:scale-105 dark:bg-red-900/10',
           )}
         >
-          <Stop weight="fill" className="size-3.5" />
+          <StopIcon weight="fill" className="size-3.5" />
         </button>
 
         <span className="ml-auto text-[10px] font-medium text-muted-foreground">
@@ -210,7 +210,7 @@ export function Stage({ isRunning, onRun, onStop }: StageProps) {
           aria-label="Fullscreen"
           className="flex size-7 items-center justify-center rounded text-muted-foreground hover:bg-muted"
         >
-          <CornersOut className="size-3.5" />
+          <CornersOutIcon className="size-3.5" />
         </button>
       </div>
     </div>

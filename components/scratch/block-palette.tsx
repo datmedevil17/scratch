@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from "react";
-import { MagnifyingGlass, Plus } from "@phosphor-icons/react";
+import { MagnifyingGlassIcon, PlusIcon } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import {
   CATEGORIES,
@@ -55,7 +55,7 @@ export function BlockPalette() {
     <div className="flex h-full w-64 shrink-0 flex-col border-r border-border bg-[#f9f9f9] dark:bg-neutral-900">
       {/* Search bar */}
       <div className="flex items-center gap-1.5 border-b border-border px-2 py-2">
-        <MagnifyingGlass className="size-3.5 shrink-0 text-muted-foreground" />
+        <MagnifyingGlassIcon className="size-3.5 shrink-0 text-muted-foreground" />
         <input
           type="search"
           placeholder="Search blocks…"
@@ -111,7 +111,7 @@ export function BlockPalette() {
               className="mx-2 mb-3 flex items-center justify-center gap-1.5 rounded py-1.5 text-xs font-semibold text-white transition-opacity hover:opacity-90 active:opacity-75"
               style={{ backgroundColor: activeCategory.color }}
             >
-              <Plus className="size-3.5" weight="bold" />
+              <PlusIcon className="size-3.5" weight="bold" />
               Make a Block
             </button>
           )}

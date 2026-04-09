@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from "react";
-import { Plus, Trash, Eye, EyeSlash } from "@phosphor-icons/react";
+import { PlusIcon, TrashIcon, EyeIcon, EyeSlashIcon } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -101,11 +101,11 @@ export function VariablesPanel() {
                   : <span className="rounded bg-muted px-1 text-[9px] text-muted-foreground">local</span>}
                 <button onClick={() => toggleVarVisible(v.id)} className="opacity-0 transition-opacity group-hover:opacity-100">
                   {v.visible
-                    ? <Eye     className="size-3 text-muted-foreground" />
-                    : <EyeSlash className="size-3 text-muted-foreground/40" />}
+                    ? <EyeIcon     className="size-3 text-muted-foreground" />
+                    : <EyeSlashIcon className="size-3 text-muted-foreground/40" />}
                 </button>
                 <button onClick={() => deleteVariable(v.id)} className="opacity-0 transition-opacity group-hover:opacity-100">
-                  <Trash className="size-3 text-destructive" />
+                  <TrashIcon className="size-3 text-destructive" />
                 </button>
               </div>
             ))}
@@ -126,7 +126,7 @@ export function VariablesPanel() {
                 onClick={addVariable}
                 className="flex size-7 items-center justify-center rounded bg-orange-400 text-white hover:bg-orange-500"
               >
-                <Plus className="size-3.5" weight="bold" />
+                <PlusIcon className="size-3.5" weight="bold" />
               </button>
             </div>
           </div>
@@ -144,11 +144,11 @@ export function VariablesPanel() {
                   <span className="rounded bg-muted px-1 text-[9px] text-muted-foreground">{l.items.length}</span>
                   <button onClick={() => toggleListVisible(l.id)}>
                     {l.visible
-                      ? <Eye     className="size-3 text-muted-foreground" />
-                      : <EyeSlash className="size-3 text-muted-foreground/40" />}
+                      ? <EyeIcon     className="size-3 text-muted-foreground" />
+                      : <EyeSlashIcon className="size-3 text-muted-foreground/40" />}
                   </button>
                   <button onClick={() => deleteList(l.id)}>
-                    <Trash className="size-3 text-destructive" />
+                    <TrashIcon className="size-3 text-destructive" />
                   </button>
                 </div>
                 <div className="max-h-20 overflow-y-auto space-y-0.5">
@@ -178,7 +178,7 @@ export function VariablesPanel() {
                 onClick={addList}
                 className="flex size-7 items-center justify-center rounded bg-orange-400 text-white hover:bg-orange-500"
               >
-                <Plus className="size-3.5" weight="bold" />
+                <PlusIcon className="size-3.5" weight="bold" />
               </button>
             </div>
           </div>

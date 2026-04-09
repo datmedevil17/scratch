@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import { X, ToggleLeft, ToggleRight, Globe, SlidersHorizontal } from "@phosphor-icons/react";
+import { XIcon, ToggleLeftIcon, ToggleRightIcon, GlobeIcon, SlidersHorizontalIcon } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
@@ -54,8 +54,8 @@ function Toggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
   return (
     <button onClick={onToggle} className="flex items-center">
       {on
-        ? <ToggleRight className="size-6 text-blue-500" weight="fill" />
-        : <ToggleLeft  className="size-6 text-muted-foreground" weight="fill" />}
+        ? <ToggleRightIcon className="size-6 text-blue-500" weight="fill" />
+        : <ToggleLeftIcon  className="size-6 text-muted-foreground" weight="fill" />}
     </button>
   );
 }
@@ -90,7 +90,7 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
       <DialogContent className="max-w-sm">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <SlidersHorizontal className="size-4" /> Settings
+            <SlidersHorizontalIcon className="size-4" /> Settings
           </DialogTitle>
         </DialogHeader>
 
@@ -145,7 +145,7 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
             <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Language</span>
             <Row label="Interface language">
               <div className="flex items-center gap-1.5">
-                <Globe className="size-3.5 text-muted-foreground" />
+                <GlobeIcon className="size-3.5 text-muted-foreground" />
                 <select
                   value={settings.language}
                   onChange={(e) => set('language', e.target.value)}
