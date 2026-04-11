@@ -5,6 +5,7 @@ import {
   MagnifyingGlass, Upload, SmileySticker, Image as ImageIcon, Waveform,
   Trash, MusicNote, X, ArrowsClockwise, Plus,
 } from "@phosphor-icons/react";
+import { Rnd } from 'react-rnd';
 import { cn } from "@/lib/utils";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -130,18 +131,23 @@ export function AssetManager({ open, onClose, onUse }: AssetManagerProps) {
   };
 
   return (
-    // Backdrop
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
-      onClick={e => { if (e.target === e.currentTarget) onClose(); }}
+    <Rnd
+      default={{
+        x: window.innerWidth / 2 - 390,
+        y: window.innerHeight / 2 - 300,
+        width: 780,
+        height: 600,
+      }}
+      minWidth={450}
+      minHeight={300}
+      bounds="window"
+      className="z-50"
+      dragHandleClassName="drag-handle"
     >
-      {/* Panel */}
-      <div className="relative flex w-[780px] max-w-[95vw] flex-col rounded-2xl border border-white/10 bg-[#111] shadow-2xl overflow-hidden"
-        style={{ maxHeight: '85vh' }}
-      >
+      <div className="flex h-full w-full flex-col rounded-2xl border border-white/10 bg-[#111] shadow-2xl overflow-hidden">
         {/* ── Header ──────────────────────────────────────────────────────── */}
-        <div className="flex shrink-0 items-center justify-between border-b border-white/10 bg-[#1a1a1a] px-5 py-3.5">
-          <div className="flex items-center gap-2">
+        <div className="drag-handle flex shrink-0 cursor-move items-center justify-between border-b border-white/10 bg-[#1a1a1a] px-5 py-3.5">
+          <div className="flex items-center gap-2 pointer-events-none">
             <div className="flex size-7 items-center justify-center rounded-lg bg-[#ff4466]/20 text-[#ff4466]">
               <Plus className="size-4" />
             </div>
@@ -297,6 +303,6 @@ export function AssetManager({ open, onClose, onUse }: AssetManagerProps) {
           </button>
         </div>
       </div>
-    </div>
+    </Rnd>
   );
 }

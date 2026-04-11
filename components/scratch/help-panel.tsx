@@ -4,6 +4,7 @@ import { useState } from "react";
 import {
   Question, X, ArrowRight, ArrowLeft, Lightbulb, BookOpen, Checks,
 } from "@phosphor-icons/react";
+import { Rnd } from 'react-rnd';
 import { cn } from "@/lib/utils";
 
 // ── Tutorial data ─────────────────────────────────────────────────────────────
@@ -102,13 +103,26 @@ export function HelpPanel({ open, onClose }: HelpPanelProps) {
   function prevStep() { setStep((s) => Math.max(0, s - 1)); }
 
   return (
-    <div className="absolute right-0 top-0 z-40 flex h-full w-72 flex-col border-l border-border bg-white shadow-xl dark:bg-neutral-900">
-      {/* Header */}
-      <div className="flex items-center justify-between border-b border-border px-3 py-2">
-        <div className="flex items-center gap-1.5">
-          <BookOpen className="size-4 text-blue-500" />
-          <span className="text-sm font-semibold">Help & Tutorials</span>
-        </div>
+    <Rnd
+      default={{
+        x: window.innerWidth - 340,
+        y: 60,
+        width: 300,
+        height: window.innerHeight - 100,
+      }}
+      minWidth={250}
+      minHeight={250}
+      bounds="window"
+      className="z-50"
+      dragHandleClassName="drag-handle"
+    >
+      <div className="flex h-full w-full flex-col overflow-hidden rounded-xl border border-border bg-white shadow-2xl dark:bg-neutral-900">
+        {/* Header */}
+        <div className="drag-handle flex cursor-move items-center justify-between border-b border-border bg-muted/40 px-3 py-2">
+          <div className="flex items-center gap-1.5 pointer-events-none">
+            <BookOpen className="size-4 text-blue-500" />
+            <span className="text-sm font-semibold">Help & Tutorials</span>
+          </div>
         <button onClick={onClose} className="flex size-6 items-center justify-center rounded hover:bg-muted">
           <X className="size-4 text-muted-foreground" />
         </button>
@@ -218,6 +232,7 @@ export function HelpPanel({ open, onClose }: HelpPanelProps) {
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </Rnd>
   );
 }

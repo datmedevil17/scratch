@@ -206,9 +206,7 @@ export default function Home() {
         </div>
 
         {/* Help drawer */}
-        <div className="absolute right-0 top-12 bottom-0 z-50">
-          <HelpPanel open={showHelp} onClose={() => setShowHelp(false)} />
-        </div>
+        <HelpPanel open={showHelp} onClose={() => setShowHelp(false)} />
       </main>
 
       {/* ── Modals ──────────────────────────────────────────────────────── */}

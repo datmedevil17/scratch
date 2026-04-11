@@ -3,9 +3,7 @@
 import { useState, useEffect } from "react";
 import { XIcon, ToggleLeftIcon, ToggleRightIcon, GlobeIcon, SlidersHorizontalIcon } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
-import {
-  Dialog, DialogContent, DialogHeader, DialogTitle,
-} from "@/components/ui/dialog";
+import { Rnd } from 'react-rnd';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 export interface EditorSettings {
@@ -96,16 +94,35 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
     setSettings((prev) => ({ ...prev, [key]: value }));
   }
 
-  return (
-    <Dialog open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
-      <DialogContent className="max-w-sm">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <SlidersHorizontalIcon className="size-4" /> Settings
-          </DialogTitle>
-        </DialogHeader>
+  if (!open) return null;
 
-        <div className="flex flex-col gap-4 pt-1">
+  return (
+    <Rnd
+      default={{
+        x: window.innerWidth / 2 - 192, // ~384px width
+        y: window.innerHeight / 2 - 200,
+        width: 384,
+        height: 'auto',
+      }}
+      minWidth={300}
+      bounds="window"
+      className="z-50"
+      dragHandleClassName="drag-handle"
+    >
+      <div className="flex h-full w-full flex-col rounded-xl border border-border bg-popover text-popover-foreground shadow-2xl">
+        <div className="drag-handle flex items-center justify-between border-b border-border bg-muted/40 px-4 py-3 cursor-move rounded-t-xl">
+          <h2 className="flex items-center gap-2 font-heading text-sm font-semibold">
+            <SlidersHorizontalIcon className="size-4" /> Settings
+          </h2>
+          <button
+            onClick={onClose}
+            className="flex size-6 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+          >
+            <XIcon className="size-4" />
+          </button>
+        </div>
+
+        <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
           {/* Theme */}
           <div className="flex flex-col gap-1.5">
             <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Appearance</span>
@@ -178,7 +195,7 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
             Reset to defaults
           </button>
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </Rnd>
   );
 }

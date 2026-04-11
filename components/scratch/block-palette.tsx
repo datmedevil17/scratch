@@ -21,6 +21,16 @@ function PaletteBlock({
   color: string;
   catId: string;
 }) {
+  // Each block needs vertical breathing room so its connectors (which
+  // protrude 7 px outside the body) don't visually touch the next block.
+  const hasConnectors = block.shape !== 'reporter' && block.shape !== 'boolean';
+  const topMargin = block.shape === 'hat'
+    ? 'mt-[26px]'          // room for HatDome (18 px) + clearance
+    : hasConnectors
+    ? 'mt-[12px]'          // room for StackNotch (7 px) + clearance
+    : 'mt-1';
+  const bottomMargin = hasConnectors ? 'mb-[12px]' : 'mb-1';
+
   return (
     <RenderedBlock
       block={block}
@@ -31,8 +41,9 @@ function PaletteBlock({
         e.dataTransfer.setData(DRAG_BLOCK_KEY, JSON.stringify({ blockId: block.id, catId }));
       }}
       className={cn(
-        'mx-2 mb-1.5 cursor-grab transition-opacity active:cursor-grabbing active:opacity-70',
-        block.shape === 'hat' && 'mt-4',
+        'mx-2 cursor-grab transition-opacity active:cursor-grabbing active:opacity-70',
+        topMargin,
+        bottomMargin,
       )}
     />
   );
