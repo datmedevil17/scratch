@@ -2,8 +2,10 @@
 
 import { useState, useCallback } from "react";
 import {
-  ArrowCounterClockwise, ArrowClockwise, Copy, ClipboardText,
-  Trash, MagnifyingGlassPlus, MagnifyingGlassMinus, CornersIn,
+  ArrowCounterClockwise as ArrowCounterClockwiseIcon, ArrowClockwise as ArrowClockwiseIcon,
+  Copy as CopyIcon, ClipboardText as ClipboardTextIcon,
+  Trash as TrashIcon, MagnifyingGlassPlus as MagnifyingGlassPlusIcon,
+  MagnifyingGlassMinus as MagnifyingGlassMinusIcon, CornersIn as CornersInIcon,
 } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -76,18 +78,18 @@ export function FloatingToolbar({
         'border border-white/20 bg-neutral-800/80 text-white shadow-lg backdrop-blur-md',
       )}
     >
-      <ToolBtn icon={<ArrowCounterClockwise className="size-3.5" />} label="Undo" shortcut="⌘Z"   disabled={!canUndo}  onClick={onUndo}  />
-      <ToolBtn icon={<ArrowClockwise        className="size-3.5" />} label="Redo" shortcut="⇧⌘Z"  disabled={!canRedo}  onClick={onRedo}  />
+      <ToolBtn icon={<ArrowCounterClockwiseIcon className="size-3.5" />} label="Undo" shortcut="⌘Z"   disabled={!canUndo}  onClick={onUndo}  />
+      <ToolBtn icon={<ArrowClockwiseIcon        className="size-3.5" />} label="Redo" shortcut="⇧⌘Z"  disabled={!canRedo}  onClick={onRedo}  />
 
       <Divider />
 
-      <ToolBtn icon={<Copy          className="size-3.5" />} label="Copy"   shortcut="⌘C" disabled={!canCopy}   onClick={onCopy}   />
-      <ToolBtn icon={<ClipboardText className="size-3.5" />} label="Paste"  shortcut="⌘V" disabled={!canPaste}  onClick={onPaste}  />
-      <ToolBtn icon={<Trash         className="size-3.5" />} label="Delete" shortcut="⌫"  disabled={!canDelete} onClick={onDelete} />
+      <ToolBtn icon={<CopyIcon          className="size-3.5" />} label="Copy"   shortcut="⌘C" disabled={!canCopy}   onClick={onCopy}   />
+      <ToolBtn icon={<ClipboardTextIcon className="size-3.5" />} label="Paste"  shortcut="⌘V" disabled={!canPaste}  onClick={onPaste}  />
+      <ToolBtn icon={<TrashIcon         className="size-3.5" />} label="Delete" shortcut="⌫"  disabled={!canDelete} onClick={onDelete} />
 
       <Divider />
 
-      <ToolBtn icon={<MagnifyingGlassMinus className="size-3.5" />} label="Zoom out" shortcut="−" disabled={false} onClick={onZoomOut} />
+      <ToolBtn icon={<MagnifyingGlassMinusIcon className="size-3.5" />} label="Zoom out" shortcut="−" disabled={false} onClick={onZoomOut} />
       <button
         onClick={onResetZoom}
         className="min-w-[38px] rounded px-1 text-center text-[10px] font-semibold tabular-nums hover:bg-white/20"
@@ -95,7 +97,7 @@ export function FloatingToolbar({
       >
         {zoomLevel}%
       </button>
-      <ToolBtn icon={<MagnifyingGlassPlus className="size-3.5" />} label="Zoom in" shortcut="+" disabled={false} onClick={onZoomIn} />
+      <ToolBtn icon={<MagnifyingGlassPlusIcon className="size-3.5" />} label="Zoom in" shortcut="+" disabled={false} onClick={onZoomIn} />
     </div>
   );
 }

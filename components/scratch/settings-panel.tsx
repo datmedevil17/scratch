@@ -81,6 +81,17 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
   // Persist on every change
   useEffect(() => { save(settings); }, [settings]);
 
+  // Apply theme to document
+  useEffect(() => {
+    const root = window.document.documentElement;
+    if (settings.theme === 'system') {
+      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      root.classList.toggle('dark', isDark);
+    } else {
+      root.classList.toggle('dark', settings.theme === 'dark');
+    }
+  }, [settings.theme]);
+
   function set<K extends keyof EditorSettings>(key: K, value: EditorSettings[K]) {
     setSettings((prev) => ({ ...prev, [key]: value }));
   }

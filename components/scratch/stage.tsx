@@ -187,7 +187,7 @@ export function Stage({ isRunning, onRun, onStop }: StageProps) {
         {/* StopIcon */}
         <button
           id="stage-stop-btn"
-          aria-label="StopIcon"
+          aria-label="Stop"
           disabled={!isRunning}
           onClick={onStop}
           className={cn(
