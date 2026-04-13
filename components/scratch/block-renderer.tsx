@@ -10,6 +10,44 @@ import { cn } from "@/lib/utils";
 export const CONNECTOR_OVERHANG = 7;  // px protruding outside block body
 export const BLOCK_GAP_PX       = 6;  // gap between stacked block bodies in workspace
 
+// ── Controlled number input ────────────────────────────────────────────────────
+function NumInput({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+  const [local, setLocal] = React.useState(String(value));
+  // Sync when the prop changes (e.g. after undo/redo)
+  React.useEffect(() => { setLocal(String(value)); }, [value]);
+  return (
+    <input
+      type="text"
+      inputMode="numeric"
+      value={local}
+      onChange={(e) => setLocal(e.target.value)}
+      onBlur={() => onChange(parseFloat(local) || 0)}
+      onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }}
+      onClick={(e) => e.stopPropagation()}
+      onPointerDown={(e) => e.stopPropagation()}
+      className="inline-flex h-5 w-[36px] rounded-full bg-white/30 px-1.5 text-center text-[10px] font-semibold leading-none text-white outline-none [appearance:textfield] focus:bg-white/50 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+    />
+  );
+}
+
+// ── Controlled string input ────────────────────────────────────────────────────
+function StrInput({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const [local, setLocal] = React.useState(value);
+  React.useEffect(() => { setLocal(value); }, [value]);
+  return (
+    <input
+      type="text"
+      value={local}
+      onChange={(e) => setLocal(e.target.value)}
+      onBlur={() => onChange(local)}
+      onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }}
+      onClick={(e) => e.stopPropagation()}
+      onPointerDown={(e) => e.stopPropagation()}
+      className="inline-flex h-5 min-w-[40px] max-w-[120px] rounded-sm bg-white/30 px-2 text-[10px] leading-none text-white outline-none focus:bg-white/50"
+    />
+  );
+}
+
 // ── Individual part ───────────────────────────────────────────────────────────
 export function RenderPart({
   part,
@@ -27,17 +65,7 @@ export function RenderPart({
     case 'num': {
       const val = value !== undefined ? value : part.v;
       return onValueChange ? (
-        <input
-          type="number"
-          defaultValue={val as number}
-          onBlur={(e) => onValueChange(parseFloat(e.target.value) || 0)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
-          }}
-          onClick={(e) => e.stopPropagation()}
-          onPointerDown={(e) => e.stopPropagation()}
-          className="inline-flex h-5 w-[36px] rounded-full bg-white/30 px-1.5 text-center text-[10px] font-semibold leading-none text-white outline-none [appearance:textfield] focus:bg-white/50 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-        />
+        <NumInput value={val as number} onChange={(v) => onValueChange(v)} />
       ) : (
         <span className="inline-flex h-5 min-w-[28px] items-center justify-center rounded-full bg-white/30 px-2 text-[10px] font-semibold leading-none">
           {val}
@@ -48,17 +76,7 @@ export function RenderPart({
     case 'str': {
       const val = value !== undefined ? value : part.v;
       return onValueChange ? (
-        <input
-          type="text"
-          defaultValue={val as string}
-          onBlur={(e) => onValueChange(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
-          }}
-          onClick={(e) => e.stopPropagation()}
-          onPointerDown={(e) => e.stopPropagation()}
-          className="inline-flex h-5 min-w-[40px] max-w-[120px] rounded-sm bg-white/30 px-2 text-[10px] leading-none text-white outline-none focus:bg-white/50"
-        />
+        <StrInput value={val as string} onChange={(v) => onValueChange(v)} />
       ) : (
         <span className="inline-flex h-5 min-w-[36px] items-center rounded-sm bg-white/30 px-2 text-[10px] leading-none">
           {val}
@@ -191,10 +209,10 @@ export function HatDome({ color }: { color: string }) {
   );
 }
 
-// ── Block shape classes ───────────────────────────────────────────────────────
+// ── Block shape classes (stack / hat / reporter / boolean / cap) ─────────────
 export function blockClasses(shape: Shape) {
   return cn(
-    'relative flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] font-semibold text-white select-none',
+    'relative flex items-center gap-x-1.5 text-[11px] font-semibold text-white select-none whitespace-nowrap',
     shape === 'reporter'
       ? 'rounded-full py-1 px-4'
       : shape === 'boolean'
@@ -205,30 +223,111 @@ export function blockClasses(shape: Shape) {
 
 export function blockStyle(shape: Shape, color: string): React.CSSProperties {
   const shadow = `0 2px 0 color-mix(in srgb, ${color} 60%, #000 40%)`;
-
   if (shape === 'boolean') {
     return {
       backgroundColor: color,
-      clipPath:
-        'polygon(10px 0%, calc(100% - 10px) 0%, 100% 50%, calc(100% - 10px) 100%, 10px 100%, 0% 50%)',
+      clipPath: 'polygon(10px 0%, calc(100% - 10px) 0%, 100% 50%, calc(100% - 10px) 100%, 10px 100%, 0% 50%)',
       paddingLeft: 20,
       paddingRight: 20,
     };
   }
   if (shape === 'reporter') {
-    return {
-      backgroundColor: color,
-      boxShadow: shadow,
-    };
+    return { backgroundColor: color, boxShadow: shadow };
   }
-  return {
-    backgroundColor: color,
-    boxShadow: shadow,
-    minWidth: 80,
-  };
+  return { backgroundColor: color, boxShadow: shadow, minWidth: 80 };
 }
 
-// ── RenderedBlock ─────────────────────────────────────────────────────────────
+// ── CBlock (C-shaped wrapper: repeat / forever / if / if-else) ───────────────
+/** Width of the left arm strip (px). */
+const ARM_W = 16;
+
+/**
+ * C-shaped block for control structures.
+ *
+ * Layout:
+ *   ┌── header ──────────────────┐   (label + inputs, rounded top)
+ *   │arm│  innerContent          │   (left arm + inner drop zone)
+ *   ╞═══╪════════════════════════╡   (separator between mouths for c2)
+ *   │arm│  inner2Content         │   (only for if/else)
+ *   └── bottom ─────────────────┘   (closing bar, rounded bottom)
+ */
+export function CBlock({
+  color,
+  headerParts,
+  innerContent,
+  inner2Content,
+  hasTopSocket  = true,
+  hasBottomPlug = true,
+  className,
+  style,
+  ...rest
+}: {
+  color: string;
+  headerParts: React.ReactNode;
+  innerContent?: React.ReactNode;
+  /** Second mouth — used by if/else. When provided an "else" label row is added. */
+  inner2Content?: React.ReactNode;
+  hasTopSocket?: boolean;
+  hasBottomPlug?: boolean;
+  className?: string;
+  style?: React.CSSProperties;
+} & React.HTMLAttributes<HTMLDivElement>) {
+  const shadow = `0 2px 0 color-mix(in srgb, ${color} 60%, #000 40%)`;
+
+  return (
+    <div
+      className={cn('relative flex flex-col select-none text-[11px] font-semibold text-white', className)}
+      style={style}
+      {...rest}
+    >
+      {hasTopSocket && <StackNotch color={color} />}
+
+      {/* Header row */}
+      <div
+        className="relative flex items-center gap-x-1.5 rounded-t-[3px] px-3 py-[6px] whitespace-nowrap"
+        style={{ backgroundColor: color, boxShadow: shadow, minWidth: 80 }}
+      >
+        {headerParts}
+      </div>
+
+      {/* First mouth */}
+      <div className="flex" style={{ minHeight: 28 }}>
+        <div className="shrink-0" style={{ width: ARM_W, backgroundColor: color }} />
+        <div className="flex flex-1 flex-col py-[3px] pl-[3px]" style={{ minHeight: 28 }}>
+          {innerContent}
+        </div>
+      </div>
+
+      {/* else row + second mouth (c2 only) */}
+      {inner2Content !== undefined && (
+        <>
+          <div
+            className="flex flex-wrap items-center gap-x-1.5 gap-y-1 px-3 py-[6px]"
+            style={{ backgroundColor: color, boxShadow: shadow }}
+          >
+            <span className="whitespace-nowrap leading-none">else</span>
+          </div>
+          <div className="flex" style={{ minHeight: 28 }}>
+            <div className="shrink-0" style={{ width: ARM_W, backgroundColor: color }} />
+            <div className="flex flex-1 flex-col py-[3px] pl-[3px]" style={{ minHeight: 28 }}>
+              {inner2Content}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Bottom closing bar */}
+      <div
+        className="relative rounded-b-[3px]"
+        style={{ height: 10, backgroundColor: color, boxShadow: shadow }}
+      >
+        {hasBottomPlug && <StackPlug color={color} />}
+      </div>
+    </div>
+  );
+}
+
+// ── RenderedBlock (non-C shapes only) ─────────────────────────────────────────
 export function RenderedBlock({
   block,
   color,
@@ -240,7 +339,6 @@ export function RenderedBlock({
 }: {
   block: BlockDef;
   color: string;
-  /** Per-part-index overrides for editable inputs (workspace only). */
   inputs?: Record<number, string | number>;
   onInputChange?: (partIndex: number, value: string | number) => void;
   className?: string;
@@ -256,8 +354,8 @@ export function RenderedBlock({
       style={{ ...blockStyle(block.shape, color), ...style }}
       {...rest}
     >
-      {isHat        && <HatDome    color={color} />}
-      {hasTopSocket && <StackNotch color={color} />}
+      {isHat         && <HatDome    color={color} />}
+      {hasTopSocket  && <StackNotch color={color} />}
       {hasBottomPlug && <StackPlug  color={color} />}
 
       {block.parts.map((part, i) => (

@@ -42,8 +42,14 @@ function ToolBtn({
     <Tooltip>
       <TooltipTrigger asChild>
         <button
-          onClick={onClick}
-          disabled={disabled}
+          onClick={(e) => {
+            if (disabled) {
+              e.preventDefault();
+              return;
+            }
+            onClick();
+          }}
+          aria-disabled={disabled}
           className={cn(
             'flex size-7 items-center justify-center rounded transition-colors',
             disabled

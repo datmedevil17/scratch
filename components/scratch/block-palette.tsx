@@ -9,9 +9,16 @@ import {
   blockSearchText,
   DRAG_BLOCK_KEY,
 } from "@/lib/scratch/blocks";
-import { RenderedBlock } from "@/components/scratch/block-renderer";
+import { RenderedBlock, CBlock, RenderPart } from "@/components/scratch/block-renderer";
 
-// ── Palette block item (with HTML5 drag-from-palette) ────────────────────────
+// ── Palette block item ────────────────────────────────────────────────────────
+/**
+ * Each palette block supports two drag mechanisms:
+ * 1. Pointer-based ghost drag — fires a custom event that the Workspace picks
+ *    up to render a crisp floating block clone following the cursor.
+ * 2. HTML5 DnD fallback — still wired so the workspace onDrop handler fires
+ *    if the pointer drag somehow doesn't complete (e.g. cross-origin iframe).
+ */
 function PaletteBlock({
   block,
   color,
@@ -21,13 +28,66 @@ function PaletteBlock({
   color: string;
   catId: string;
 }) {
-  // Each block needs vertical breathing room so its connectors (which
-  // protrude 7 px outside the body) don't visually touch the next block.
+  const isC  = block.shape === 'c';
+  const isC2 = block.shape === 'c2';
+
+  function handlePointerDown(e: React.PointerEvent<HTMLElement>) {
+    if (e.button !== 0) return;
+    // Compute grab offset relative to the element being grabbed
+    const rect = e.currentTarget.getBoundingClientRect();
+    const grabOffsetX = e.clientX - rect.left;
+    const grabOffsetY = e.clientY - rect.top;
+    window.dispatchEvent(new CustomEvent('scratch:palette-drag-start', {
+      detail: {
+        blockId: block.id,
+        clientX: e.clientX,
+        clientY: e.clientY,
+        grabOffsetX,
+        grabOffsetY,
+      },
+    }));
+  }
+
+  function handleDragStart(e: React.DragEvent) {
+    // HTML5 fallback: keep dataTransfer populated but hide the default ghost
+    e.dataTransfer.effectAllowed = 'copy';
+    e.dataTransfer.setData(DRAG_BLOCK_KEY, JSON.stringify({
+      blockId: block.id,
+      catId,
+      offsetX: e.nativeEvent.offsetX,
+      offsetY: e.nativeEvent.offsetY,
+    }));
+    // Use a transparent 1×1 image as the drag image so the browser ghost is invisible
+    const ghost = document.createElement('div');
+    ghost.style.cssText = 'position:fixed;width:1px;height:1px;top:-9999px;left:-9999px;opacity:0';
+    document.body.appendChild(ghost);
+    e.dataTransfer.setDragImage(ghost, 0, 0);
+    requestAnimationFrame(() => document.body.removeChild(ghost));
+  }
+
+  if (isC || isC2) {
+    const headerParts = block.parts.map((part, i) => (
+      <RenderPart key={i} part={part} />
+    ));
+    return (
+      <CBlock
+        color={color}
+        headerParts={headerParts}
+        hasTopSocket
+        hasBottomPlug={isC}
+        draggable
+        onPointerDown={handlePointerDown}
+        onDragStart={handleDragStart}
+        className="mx-2 max-w-[calc(100%-1rem)] overflow-hidden mt-[12px] mb-[12px] cursor-grab transition-opacity active:cursor-grabbing active:opacity-70"
+      />
+    );
+  }
+
   const hasConnectors = block.shape !== 'reporter' && block.shape !== 'boolean';
   const topMargin = block.shape === 'hat'
-    ? 'mt-[26px]'          // room for HatDome (18 px) + clearance
+    ? 'mt-[26px]'
     : hasConnectors
-    ? 'mt-[12px]'          // room for StackNotch (7 px) + clearance
+    ? 'mt-[12px]'
     : 'mt-1';
   const bottomMargin = hasConnectors ? 'mb-[12px]' : 'mb-1';
 
@@ -35,16 +95,14 @@ function PaletteBlock({
     <RenderedBlock
       block={block}
       color={color}
-      draggable
-      onDragStart={(e) => {
-        e.dataTransfer.effectAllowed = 'copy';
-        e.dataTransfer.setData(DRAG_BLOCK_KEY, JSON.stringify({ blockId: block.id, catId }));
-      }}
       className={cn(
-        'mx-2 cursor-grab transition-opacity active:cursor-grabbing active:opacity-70',
+        'mx-2 max-w-[calc(100%-1rem)] overflow-hidden cursor-grab transition-opacity active:cursor-grabbing active:opacity-70',
         topMargin,
         bottomMargin,
       )}
+      draggable
+      onPointerDown={handlePointerDown}
+      onDragStart={handleDragStart}
     />
   );
 }
@@ -116,7 +174,7 @@ export function BlockPalette() {
   }, [query]);
 
   return (
-    <div className="flex h-full w-64 shrink-0 flex-col border-r border-border bg-[#f9f9f9] dark:bg-neutral-900">
+    <div className="flex h-full w-80 shrink-0 flex-col border-r border-border bg-[#f9f9f9] dark:bg-neutral-900">
       {/* Search bar */}
       <div className="flex items-center gap-1.5 border-b border-border px-2 py-2">
         <MagnifyingGlassIcon className="size-3.5 shrink-0 text-muted-foreground" />
@@ -162,7 +220,7 @@ export function BlockPalette() {
         </nav>
 
         {/* Block list */}
-        <div ref={scrollContainerRef} className="flex min-h-0 flex-1 flex-col overflow-y-auto py-3 relative scroll-smooth">
+        <div ref={scrollContainerRef} className="flex min-h-0 flex-1 flex-col overflow-y-auto overflow-x-hidden py-3 relative scroll-smooth">
           {visibleCategories.length > 0 ? (
             visibleCategories.map(cat => {
               if (query && cat.blocks.length === 0 && cat.id !== 'myblocks') return null;

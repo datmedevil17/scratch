@@ -14,12 +14,14 @@ export const d   = (v: string, opts: string[]): Part => ({ k: 'drop', v, opts })
 export const col = (v: string): Part => ({ k: 'color', v });
 export const b   = (): Part => ({ k: 'bool' });
 
-export type Shape = 'hat' | 'stack' | 'reporter' | 'boolean' | 'cap';
+export type Shape = 'hat' | 'stack' | 'reporter' | 'boolean' | 'cap' | 'c' | 'c2';
 
 export interface BlockDef {
-  id:    string;
-  shape: Shape;
-  parts: Part[];
+  id:       string;
+  shape:    Shape;
+  parts:    Part[];
+  /** True for C-blocks that act as terminators (no bottom plug, e.g. forever). */
+  terminal?: boolean;
 }
 
 export interface Category {
@@ -108,12 +110,12 @@ export const CATEGORIES: Category[] = [
     id: 'control', label: 'Control', color: '#ffab19',
     blocks: [
       { id: 'c1',  shape: 'stack', parts: [t('wait'), n(1), t('seconds')] },
-      { id: 'c2',  shape: 'stack', parts: [t('repeat'), n(10)] },
-      { id: 'c3',  shape: 'stack', parts: [t('forever')] },
-      { id: 'c4',  shape: 'stack', parts: [t('if'), b(), t('then')] },
-      { id: 'c5',  shape: 'stack', parts: [t('if'), b(), t('then / else')] },
+      { id: 'c2',  shape: 'c',    parts: [t('repeat'), n(10)] },
+      { id: 'c3',  shape: 'c',    terminal: true, parts: [t('forever')] },
+      { id: 'c4',  shape: 'c',    parts: [t('if'), b(), t('then')] },
+      { id: 'c5',  shape: 'c2',   parts: [t('if'), b(), t('then'), t('else')] },
       { id: 'c6',  shape: 'stack', parts: [t('wait until'), b()] },
-      { id: 'c7',  shape: 'stack', parts: [t('repeat until'), b()] },
+      { id: 'c7',  shape: 'c',    parts: [t('repeat until'), b()] },
       { id: 'c8',  shape: 'stack', parts: [t('create clone of'), d('myself', ['myself', 'Sprite1'])] },
       { id: 'c9',  shape: 'hat',   parts: [t('when I start as a clone')] },
       { id: 'c10', shape: 'cap',   parts: [t('delete this clone')] },
